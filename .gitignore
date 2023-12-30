@@ -1,0 +1,9 @@
+.parcel-cache
+.vscode
+dist
+node_modules
+*.heapsnapshot
+*.heapsnapshot.csv
+*.csv
+data.json
+data
