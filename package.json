@@ -2,9 +2,8 @@
   "name": "heapdumps",
   "version": "1.0.0",
   "description": "",
-  "main": "graph.js",
   "scripts": {
-    "start": "parcel index.html",
+    "start": "vite",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
@@ -17,7 +16,9 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@types/node": "^20.10.6",
+    "buffer": "^5.7.1",
     "eslint": "^8.36.0",
-    "parcel": "^2.8.3"
+    "vite": "^5.0.10"
   }
 }

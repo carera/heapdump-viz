@@ -149,15 +149,64 @@ export class Graph {
     fs.writeFileSync(`data.json`, JSON.stringify(data), "utf-8");
   }
 
-  getCosmographAtDepth(maxDepth) {
-    const root = this.nodes[0];
+  getCosmograph() {
     const data = {
       nodes: [],
       links: [],
     };
-    let currentDepth = maxDepth;
-    const visited = { [root.id]: 1 };
-    while (currentDepth <= maxDepth) {}
+    for (const node of this.nodes) {
+      data.nodes.push({ id: node.id });
+      for (const edge of node.childEdges) {
+        data.links.push({
+          source: node.id,
+          target: edge.child.id,
+        });
+      }
+    }
+    return data;
+  }
+
+  ignoreNodes = ['code', 'synthetic', 'hidden']
+
+  getCosmographAtDepth(depth) {
+    const data = {
+      nodes: [],
+      links: [],
+      meta: {}
+    };
+    // find roots
+    const roots = []
+    for (const node of this.nodes) {
+      if (node.parentEdges.length == 0) {
+        roots.push(node);
+        data.nodes.push(node)
+      }
+    }
+    // iterate over nodes down to a depth
+    let queue = roots;
+    const visited = {};
+    let currentDepth = 0;
+    while (currentDepth < depth) {
+      const subQueue = [];
+      while (queue.length) {
+        const node = queue.pop();
+        if (visited[node.id]) {
+          continue;
+        }
+        visited[node.id] = 1;
+        node.childEdges.forEach((e) => {
+          if (this.ignoreNodes.includes(e.child.type)) {
+            return;
+          }
+          subQueue.push(e.child);
+          data.nodes.push(e.child);
+          data.links.push({source: node.id, target: e.child.id});
+        });
+      }
+      queue = subQueue
+      currentDepth++
+    }
+    console.log(data);
     return data;
   }
 
