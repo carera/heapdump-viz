@@ -172,7 +172,9 @@ export class Graph {
     const data = {
       nodes: [],
       links: [],
-      meta: {}
+      meta: {
+        types: {}
+      }
     };
     // find roots
     const roots = []
@@ -185,8 +187,9 @@ export class Graph {
     // iterate over nodes down to a depth
     let queue = roots;
     const visited = {};
+    const addedNodes = {}
     let currentDepth = 0;
-    while (currentDepth < depth) {
+    while (currentDepth < depth && queue.length) {
       const subQueue = [];
       while (queue.length) {
         const node = queue.pop();
@@ -195,18 +198,24 @@ export class Graph {
         }
         visited[node.id] = 1;
         node.childEdges.forEach((e) => {
-          if (this.ignoreNodes.includes(e.child.type)) {
-            return;
+          // if (this.ignoreNodes.includes(e.child.type)) {
+          //   return;
+          // }
+          if (!visited[e.child.id]) {
+            // do not double-add nodes
+            if (!addedNodes[e.child.id]) {
+              subQueue.push(e.child);
+              data.nodes.push(e.child);
+            }
+            addedNodes[e.child.id] = 1
+            data.links.push({source: node.id, target: e.child.id});
+            data.meta.types[e.child.type] = data.meta.types[e.child.type] ? data.meta.types[e.child.type] + 1 : 1
           }
-          subQueue.push(e.child);
-          data.nodes.push(e.child);
-          data.links.push({source: node.id, target: e.child.id});
         });
       }
       queue = subQueue
       currentDepth++
     }
-    console.log(data);
     return data;
   }
 

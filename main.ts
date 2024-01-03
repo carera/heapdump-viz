@@ -7,6 +7,7 @@ const rawData = await rawDataResponse.text()
 const heapData = JSON5.parse(rawData)
 
 const graphInstance = new GraphLib.Graph(heapData);
+graphInstance.getInfo()
 
 const canvas = document.querySelector("canvas");
 const config: GraphConfigInterface<InputNode, InputLink> = {
@@ -14,8 +15,9 @@ const config: GraphConfigInterface<InputNode, InputLink> = {
   useQuadtree: true,
   linkArrows: false,
   backgroundColor: "#151515",
+  spaceSize: 8192,
   nodeSize: 2,
-  linkWidth: 2,
+  linkWidth: 1,
   nodeColor: (node) => {
     if (node.type == 'hidden') return '#2E3440';
     else if (node.type == 'array') return '#3B4252';
@@ -48,9 +50,9 @@ const config: GraphConfigInterface<InputNode, InputLink> = {
         type: ${node.type}<br/>
         name: ${node.name}<br/>
         size: ${node.self_size}<br/>
-        children: ${node.childEdges.length}<br/>
-        parents: ${node.parentEdges.length}<br/>
-        detacheness: ${node.detacheness}<br/>
+        children: ${(node.childEdges as []).length}<br/>
+        parents: ${(node.parentEdges as []).length}<br/>
+        detachedness: ${node.detachedness}<br/>
       `
     },
   },
@@ -62,10 +64,13 @@ const graph = new Graph(canvas!, config);
 const setGraph = (depth) => {
   const graphData = graphInstance.getCosmographAtDepth(depth);
   graph.setData(graphData.nodes, graphData.links);
+  if (isPaused) graph.pause();
   graphInfoDiv!.innerHTML = `
     Nodes: ${graphData.nodes.length}<br/>
     Edges: ${graphData.links.length}<br/>
+    <pre>${JSON.stringify(graphData.meta.types, null, 2)}</pre><br/>
   `
+  depthInfoDiv!.innerHTML = `Depth: ${depth}`
 };
 
 // ############# CONTROLS
@@ -75,18 +80,21 @@ let depth = 1
 const pauseButton = document.getElementById("pause");
 const increaseDepthButton = document.getElementById("increaseDepth");
 const decreaseDepthButton = document.getElementById("decreaseDepth");
+const fullDepthButton = document.getElementById("fullDepth");
+const toggleEdgesButton = document.getElementById("toggleEdges");
 const nodeInfoDiv = document.getElementById("nodeInfo");
 const graphInfoDiv = document.getElementById("graphInfo");
+const depthInfoDiv = document.getElementById("depthInfo");
 
 function pause() {
   isPaused = true;
-  pauseButton!.textContent = "Start";
+  pauseButton!.textContent = "Start (Space)";
   graph.pause();
 }
 
 function start() {
   isPaused = false;
-  pauseButton!.textContent = "Pause";
+  pauseButton!.textContent = "Pause (Space)";
   graph.start();
 }
 
@@ -95,12 +103,30 @@ function togglePause() {
   else pause();
 }
 
+function toggleEdges() {
+  graph.setConfig({ renderLinks: !graph.config.renderLinks });
+}
+
 pauseButton!.addEventListener("click", togglePause);
 increaseDepthButton!.addEventListener("click", () => {
   setGraph(++depth);
 });
 decreaseDepthButton!.addEventListener("click", () => {
   setGraph(--depth);
+});
+fullDepthButton!.addEventListener("click", () => {
+  setGraph(depth = Infinity);
+});
+toggleEdgesButton!.addEventListener("click", () => {
+  toggleEdges()
+});
+// increase depth when letter A is pressed
+document.addEventListener("keypress", (e) => {
+  if (e.key === "a") setGraph(++depth)
+  else if (e.key ==="z") setGraph(--depth)
+  else if (e.key ==="f") setGraph(depth = Infinity)
+  else if (e.key ==="e") toggleEdges()
+  else if (e.key === " ") togglePause()
 });
 
 setGraph(depth);
