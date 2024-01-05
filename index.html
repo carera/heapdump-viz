@@ -1,65 +1,47 @@
 <html>
 <head>
-    <style>
-        body {
-            margin: 0;
-            font-family: var(--font-family-override,""),-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-        }
-        .app {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 0
-        }
-        
-        canvas {
-            width: 100%;
-            height: 100%;
-            border: 0
-        }
-        
-        .actions {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: #ccc;
-        }
-        
-        .header {
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-        
-        .action {
-            margin-left: 2p0;
-            text-decoration: underline;
-            cursor: pointer;
-            user-select: none;
-        }
-        
-    </style>
+  <style>
+    body {
+      background-color: #151515;
+      margin: 0;
+      font-family: var(--font-family-override,""),-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    }
+    .app {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 0
+    }
+    
+    canvas {
+      width: 100%;
+      height: 100%;
+      border: 0
+    }
+    
+    .actions {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: #ccc;
+    }
+    
+    .header {
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+    
+    .action {
+      margin-left: 2p0;
+      text-decoration: underline;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+  </style>
 </head>
-<body>    
-    <div class="app">
-        <canvas></canvas>
-    </div>
-    
-    <div class="actions">
-        <div class="header">Actions:</div>
-        <div class="action" id="pause">Pause (Space)</div>
-        <div class="action" id="increaseDepth">Increase depth (A)</div>
-        <div class="action" id="decreaseDepth">Decrease depth (Z)</div>
-        <div class="action" id="fullDepth">Show full graph (F)</div>
-        <div class="action" id="toggleEdges">Toggle edges (E)</div>
-        <br/>
-        <div class="header" id="graphInfoLabel">Graph Info:</div>
-        <div class="" id="depthInfo"></div>
-        <div class="" id="graphInfo"></div>
-        <br/>
-        <div class="header" id="nodeInfoLabel">Node Info:</div>
-        <div class="" id="nodeInfo"></div>
-    </div>
-    
-    <script type="module" src="./main.ts"></script>
+<body>
+  <div id="root"></div>
+  <script type="module" src="./src/main.tsx"></script>
 </body>
 </html>
